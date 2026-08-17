@@ -1798,6 +1798,47 @@ function optv2PopulateCounterparties() {
     counterparties.map(c => `<option value="${c.replace(/"/g, "&quot;")}">${c}</option>`).join("");
 }
 
+// Make a "<select multiple>" of counterparties toggle on plain click (no Ctrl/Cmd needed),
+// and wire up its "Select All" / "Clear" buttons. Shared by the Optimizer v2 and v3 tabs.
+function wireCounterpartyMultiSelect(selectId, selectAllBtnId, clearBtnId) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+
+  const fireChange = () => select.dispatchEvent(new Event("change", { bubbles: true }));
+
+  // Native <select multiple> only lets you add to the selection with Ctrl/Cmd-click.
+  // Intercept the mousedown and toggle the clicked option ourselves instead.
+  select.addEventListener("mousedown", (e) => {
+    if (e.target.tagName !== "OPTION") return;
+    e.preventDefault();
+    const opt = e.target;
+    opt.selected = !opt.selected;
+    const allOpt = select.querySelector('option[value="ALL"]');
+    if (opt.value === "ALL" && opt.selected) {
+      // Picking ALL clears any specific counterparties.
+      Array.from(select.options).forEach(o => { if (o !== opt) o.selected = false; });
+    } else if (opt.value !== "ALL" && opt.selected && allOpt) {
+      // Picking a specific counterparty drops ALL.
+      allOpt.selected = false;
+    }
+    // Never leave the box with nothing highlighted — fall back to ALL.
+    if (allOpt && !Array.from(select.options).some(o => o.selected)) allOpt.selected = true;
+    select.focus();
+    fireChange();
+  });
+
+  document.getElementById(selectAllBtnId)?.addEventListener("click", () => {
+    Array.from(select.options).forEach(o => { o.selected = o.value !== "ALL"; });
+    fireChange();
+  });
+  document.getElementById(clearBtnId)?.addEventListener("click", () => {
+    Array.from(select.options).forEach(o => { o.selected = o.value === "ALL"; });
+    fireChange();
+  });
+}
+wireCounterpartyMultiSelect("optv2-counterparties", "optv2-cpty-select-all", "optv2-cpty-clear");
+wireCounterpartyMultiSelect("optv3-counterparties", "optv3-cpty-select-all", "optv3-cpty-clear");
+
 // Auto-fill ref spot and compute % OTM / notional when strike or qty changes
 function tfAutoCalc() {
   const spot = parseFloat(document.getElementById("tf-ref-spot").value) || 0;

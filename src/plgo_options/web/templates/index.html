@@ -1541,9 +1541,13 @@
         </label>
         <label class="pf-filter-label">Counterparties
           <select id="optv2-counterparties" multiple size="3" style="width:auto;min-width:180px;margin:0"
-            title="Ctrl/Cmd-click to select multiple. None selected = ALL.">
+            title="Click a counterparty to toggle it on/off — no Ctrl/Cmd needed. None selected = ALL.">
             <option value="ALL" selected>ALL</option>
           </select>
+          <span style="display:flex;gap:.3rem">
+            <button type="button" id="optv2-cpty-select-all" class="btn-secondary" style="width:auto;margin:0;padding:.2rem .5rem;font-size:.7rem">Select All</button>
+            <button type="button" id="optv2-cpty-clear" class="btn-secondary" style="width:auto;margin:0;padding:.2rem .5rem;font-size:.7rem">Clear</button>
+          </span>
         </label>
         <label class="pf-filter-label">Roll DTE Threshold
           <input
@@ -1855,7 +1859,11 @@
           <div class="optv3-field optv3-field-full">
             <label for="optv3-counterparties">Counterparties</label>
             <select id="optv3-counterparties" multiple size="3"><option value="ALL" selected>ALL</option></select>
-            <p class="optv3-hint">Ctrl/Cmd-click for multiple. None selected = all counterparties.</p>
+            <div style="display:flex;gap:.3rem;margin-top:.3rem">
+              <button type="button" id="optv3-cpty-select-all" class="btn-secondary" style="width:auto;margin:0;padding:.2rem .5rem;font-size:.7rem">Select All</button>
+              <button type="button" id="optv3-cpty-clear" class="btn-secondary" style="width:auto;margin:0;padding:.2rem .5rem;font-size:.7rem">Clear</button>
+            </div>
+            <p class="optv3-hint">Click a counterparty to toggle it on/off — no Ctrl/Cmd needed. None selected = all counterparties.</p>
           </div>
         </div>
 
@@ -2660,6 +2668,6 @@
   </div>
 </div>
 
-<script src="/static/app.js?v=123"></script>
+<script src="/static/app.js?v=124"></script>
 </body>
 </html>
