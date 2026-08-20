@@ -105,6 +105,10 @@ class OptimizationParams(BaseModel):
     delta_band: float = 75.0
     downside_factor: float = 1.0
     t90_weight: float = 0.0
+    # Power-law tilt on the profile-fit spot_weights (gamma = exp(atm_concentration)):
+    # 0 (default) is an exact no-op; >0 concentrates fit pressure at the money;
+    # <0 flattens it toward a uniform spread. See optimizer_v3.run_lp.
+    atm_concentration: float = 0.0
     # Per-counterparty hard loss cap: a counterparty's own (non-rolled book +
     # this run's trades for that CP) may never be worth more than this many
     # dollars less than it is today, at any spot on the ladder — the fleet-wide
@@ -257,6 +261,7 @@ async def run_optimizer(params: OptimizationParams):
         delta_band=params.delta_band,
         downside_factor=params.downside_factor,
         t90_weight=params.t90_weight,
+        atm_concentration=params.atm_concentration,
         max_cp_loss_usd=params.max_cp_loss_usd,
         collateral_by_cp=collateral_by_cp,
         enforce_collateral_cap=params.use_collateral_cap,

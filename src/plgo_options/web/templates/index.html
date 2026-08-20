@@ -1505,6 +1505,10 @@
           <input type="number" id="optv2-t90-weight" value="0" step="0.1" min="0" max="1" style="width:5rem"
             title="Blend between fitting the target today (0) and fitting it 90 days forward (1) — e.g. 0.3 means 70% today-fit, 30% T+90-fit. A book that matches the target today can still drift badly by T+90 purely from theta decay; this lets the optimizer care about both, not just today. 0 = today only (default, unchanged from before this existed).">
         </label>
+        <label class="pf-filter-label">ATM Concentration
+          <input type="number" id="optv2-atm-concentration" value="0" step="0.5" style="width:5rem"
+            title="Power-law tilt on the profile-fit spot-weights (gamma = e^value). 0 = unchanged (default) — the risk-neutral-density weighting derived from the target expiry's smile. >0 concentrates fit pressure more at the money, shrinking the tails' relative influence; <0 flattens it toward an even spread across the whole ladder.">
+        </label>
         <label class="pf-filter-label">μ Collateral
           <input type="number" id="optv2-mu-factor" value="2.3" step="0.1" min="0" style="width:5rem"
             title="Holding-cost weight for posted collateral in the LP objective. Higher = optimizer works harder to avoid growing collateral usage; 0 = collateral is free.">
@@ -1881,6 +1885,10 @@
           <div class="optv3-field">
             <label for="optv3-t90-weight">T+90 blend <input type="number" id="optv3-t90-weight" value="0" step="0.1" min="0" max="1"></label>
             <p class="optv3-hint">Blend fitting the target today (0) vs. 90 days forward (1). e.g. 0.3 = 70% today / 30% T+90, so theta drift is considered.</p>
+          </div>
+          <div class="optv3-field">
+            <label for="optv3-atm-concentration">ATM concentration <input type="number" id="optv3-atm-concentration" value="0" step="0.5"></label>
+            <p class="optv3-hint">Power-law tilt on the profile-fit spot-weights (gamma = e^value). 0 = unchanged (default). &gt;0 concentrates fit pressure more at the money; &lt;0 flattens it toward an even spread across the ladder.</p>
           </div>
           <div class="optv3-field">
             <label for="optv3-mu-factor">μ Collateral <input type="number" id="optv3-mu-factor" value="2.3" step="0.1" min="0"></label>
@@ -2668,6 +2676,6 @@
   </div>
 </div>
 
-<script src="/static/app.js?v=124"></script>
+<script src="/static/app.js?v=125"></script>
 </body>
 </html>

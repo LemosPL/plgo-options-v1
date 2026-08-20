@@ -1087,6 +1087,7 @@ class OptimizerV3(BaseOptimizer):
                  collateral_by_cp: "dict[str, dict[str, float]] | None" = None,
                  enforce_collateral_cap: bool = False,
                  enable_composite_unwind: bool = True,
+                 atm_concentration: float = 0.0,
             ):
         if asset is not None:
             self.asset = asset.upper()
@@ -1251,6 +1252,20 @@ class OptimizerV3(BaseOptimizer):
             )
         else:
             spot_weights = np.ones_like(spot_arr, dtype=float)
+        spot_weights /= np.sum(spot_weights)
+
+        # ATM concentration knob: power-law tilt on the (already risk-neutral-
+        # density-weighted) spot_weights, à la temperature-scaled "sharpening"
+        # (p^(1/T) / sum(p^(1/T))). atm_concentration=0 -> gamma=1 -> exact
+        # no-op, so the default reproduces today's behavior bit-for-bit.
+        # Positive values concentrate more weight at the money (gamma>1,
+        # shrinks the tails' relative share, including the density floor's
+        # flat tail below); negative values flatten toward a uniform spread
+        # (gamma->0 as atm_concentration->-inf, the well-defined uniform
+        # limit of p^gamma). Applied once here so both the T0 and T+90
+        # profile-fit terms below see the same tilted weights.
+        atm_gamma = float(np.exp(atm_concentration))
+        spot_weights = np.power(spot_weights, atm_gamma)
         spot_weights /= np.sum(spot_weights)
 
         base_payoff = np.zeros_like(spot_arr)

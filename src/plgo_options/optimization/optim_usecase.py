@@ -107,6 +107,11 @@ class OptimizerRunParams:
     delta_band: float = 75.0
     downside_factor: float = 1.0
     t90_weight: float = 0.0
+    # Power-law tilt on the profile-fit spot_weights: gamma = exp(atm_concentration),
+    # so 0 (default) is an exact no-op. >0 concentrates fit pressure at the money
+    # (tails matter relatively less); <0 flattens toward a uniform spread across
+    # the ladder. See optimizer_v3.run_lp for the actual application.
+    atm_concentration: float = 0.0
     max_cp_loss_usd: float | dict[str, float] | None = None
     # Posted collateral per counterparty, per asset (e.g. {"Flowdesk": {"USDC": 6_717_467, "ETH": 2000}}),
     # sourced from the Collateral tab (always fetched by the route; only USD + this run's own asset are
